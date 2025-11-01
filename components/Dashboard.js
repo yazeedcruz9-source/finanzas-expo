@@ -1,13 +1,23 @@
-import React, { useMemo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import React, { useMemo, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, LayoutAnimation, Platform, UIManager } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { Ionicons } from '@expo/vector-icons';
 import { categories } from "../utils/theme";
+
+// Habilitar animaciones en Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const screenWidth = Dimensions.get("window").width - 24;
 
 export default function Dashboard({ navigation, data, theme }) {
   const totalBalance = (data.accounts || []).reduce((s, a) => s + (Number(a.balance) || 0), 0).toFixed(2);
+
+  // Animación suave cuando cambian los datos
+  useEffect(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }, [data.transactions, data.accounts]);
 
   // resumen gastos por categoría
   const byCategory = useMemo(() => {

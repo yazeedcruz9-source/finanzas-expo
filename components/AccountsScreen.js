@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert, LayoutAnimation, Platform, UIManager } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import uuid from "react-native-uuid";
+
+// Habilitar animaciones en Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function AccountsScreen({ accounts = [], addAccount, navigation, theme }) {
   const [name, setName] = useState("");
@@ -9,6 +14,7 @@ export default function AccountsScreen({ accounts = [], addAccount, navigation, 
 
   const onAdd = () => {
     if (!name) return Alert.alert("Nombre requerido");
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     const acc = { id: uuid.v4(), name, balance: Number(balance) || 0 };
     addAccount(acc);
     setName(""); setBalance("");
